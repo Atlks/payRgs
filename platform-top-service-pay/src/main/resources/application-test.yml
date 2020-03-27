@@ -1,0 +1,178 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      showDetails: ALWAYS
+
+#服务器端口
+server:
+  port: 10004
+  undertow:
+    # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
+    # 不要设置过大，如果过大，启动项目会报错：打开文件数过多
+    ioThreads: 8
+    # 阻塞任务线程池, 当执行类似servlet请求阻塞IO操作, undertow会从这个线程池中取得线程
+    # 它的值设置取决于系统线程执行任务的阻塞系数，默认值是IO线程数*8
+    workerThreads: 64
+    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+    # 每块buffer的空间大小,越小的空间被利用越充分，不要设置太大，以免影响其他应用，合适即可, 默认值源自JVM可用的最大内存量
+    bufferSize: 1024
+    # 是否分配的直接内存(NIO直接分配的堆外内存) 默认值是从可用于JVM的最大内存量派生的。
+    directBuffers: true
+
+
+eureka:
+  instance:
+    # ipAddress: 192.168.0.3
+    preferIpAddress: true  # 访问路径可以显示IP地址
+    # instanceId: ${eureka.instance.ipAddress}:${server.port} #显示服务名称(ip:port集群需不同名,如果重复会覆盖之前的实例)
+    #指示eureka客户端向*eureka服务器发送心跳以指示其仍处于活动状态所需的频率（以秒为单位）默认30。
+    leaseRenewalIntervalInSeconds: 10
+    #指示eureka服务器在收到last heartbeat之前等待的时间（以秒为单位），然后才能从该视图中删除此实例，并禁止流量到此实例。
+    #此值必须高于leaseRenewalIntervalInSeconds的值
+    leaseExpirationDurationInSeconds: 15
+  client:
+    #从eureka服务器注册表中获取注册信息的时间间隔（s），默认为30秒
+    registryFetchIntervalSeconds: 10
+    #复制实例变化信息到eureka服务器所需要的时间间隔（s），默认为30秒
+    instanceInfoReplicationIntervalSeconds: 10
+    #最初复制实例信息到eureka服务器所需的时间（s），默认为40秒
+    initialInstanceInfoReplicationIntervalSeconds: 15
+    #询问Eureka服务url信息变化的时间间隔（s），默认为300秒
+    eurekaServiceUrlPollIntervalSeconds: 10
+    service-url:
+      defaultZone: http://192.168.0.3:7777/eureka
+
+#MyBatis
+mybatisPlus:
+  # 3.1.2版本默认值就是classpath*:/mapper/**/*.xml
+  mapperLocations: classpath*:/mapper/**/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  #MyBaits 别名包扫描路径，通过该属性可以给包中的类注册别名，注册后在 Mapper 对应的 XML 文件中可以直接使用类名，
+  #而不用使用全限定的类名(即 XML 中调用的时候不用包含包名)
+  typeAliasesPackage: com.top.xiaoyu.run.service.dict.entity
+  #通过该属性可指定 MyBatis 的执行器，MyBatis 的执行器总共有三种
+  #ExecutorType.SIMPLE：该执行器类型不做特殊的事情，为每个语句的执行创建一个新的预处理语句（PreparedStatement）
+  #ExecutorType.REUSE：该执行器类型会复用预处理语句（PreparedStatement）
+  #ExecutorType.BATCH：该执行器类型会批量执行所有的更新语句
+  #executorType: BATCH
+  globalConfig:
+    banner: false
+    dbConfig:
+      #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+      insertStrategy: 'NOT_NULL' #默认就是NOT_NULL
+      #驼峰下划线转换
+      tableUnderline: true #默认就是true
+  configuration:
+    mapUnderscoreToCamelCase: true
+    cacheEnabled: false
+    defaultEnumTypeHandler: com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler
+
+spring:
+  main:
+    allow-bean-definition-overriding=true:
+  cloud:
+    inetutils:
+      #强制仅使用站点本地地址
+      useOnlySiteLocalInterfaces: true
+      #强制使用正则表达式列表中指定的网络地址
+      preferredNetworks:
+        - 192.168.0
+    stream:
+      rocketmq:
+        binder:
+          name-server: 192.168.0.4:9876
+        bindings:
+          user-reg-to-broadcast-input:
+            consumer:
+              broadcasting: true
+          sample-to-sample1-input:
+            consumer:
+              orderly: true
+          sample-to-sample1-output:
+            producer:
+              group: sample-to-sample1
+      bindings:
+        sample-to-sample1-input: # 定义的stream 输入名
+          group: sample-to-sample1 #区分重复消费问题
+          destination: sample-to-sample1-topic
+          content-type: application/json
+        user-reg-to-broadcast-input: # 定义的stream 输入名
+          group: user-reg-to-broadcast #区分重复消费问题
+          destination: user-reg-to-broadcast-topic
+          content-type: application/json
+        sample-to-sample1-output: # 定义的stream 输入名
+          destination: sample-to-sample1-topic
+          content-type: application/json
+
+  datasource:
+    url: jdbc:mysql://192.168.0.2:3306/platform_pay?useSSL=false&characterEncoding=utf8&useUnicode=true&useLocalSessionState=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: Ddmysql20190529
+    druid:
+      initialSize: 0
+      maxActive: 8
+      minIdle: 0
+      maxWait: -1
+
+top:
+  zookeeper:
+    url: 192.168.0.2:2181
+  lock: #zookeeper 分布式锁
+    zookeeper:
+      enable: true #开启分布式锁
+  redisson:
+    config:
+      ## 单节点模式
+      singleServerConfig:
+        idleConnectionTimeout: 10000
+        pingTimeout: 1000
+        connectTimeout: 10000
+        timeout: 3000
+        retryAttempts: 3
+        retryInterval: 1500
+        reconnectionTimeout: 3000
+        failedAttempts: 3
+        password: "Ddredis20190529"
+        subscriptionsPerConnection: 5
+        clientName: null
+        address: "redis://192.168.0.2:6380"
+        subscriptionConnectionMinimumIdleSize: 1
+        subscriptionConnectionPoolSize: 50
+        connectionMinimumIdleSize: 32
+        connectionPoolSize: 64
+        database: 0
+        dnsMonitoring: false
+        dnsMonitoringInterval: 5000
+      ## 16
+      threads: 16
+      ## 32
+      nettyThreads: 32
+      ## 默认NIO
+      transportMode: NIO
+
+pay:
+  sysPath: http://192.168.0.3:10004/top-service-pay/
+  mango:  #芒果支付系统php
+    merchantId: 180778887  # 商户编码
+    signKey: hklpt8ely60t4nqa2w4k84uq06b1pd5v   # 支付 key
+    form: 3 # 3 时表示接口会返回 json数据，而非请求跳转。不传时，则表示请求跳转（跳转到支付页）
+    notifyUrl: rpc/payapi/mango/notify  #芒果支付系统回调支付通知地址，第三方主动请求
+    returnUrl: #返回链接页面链接
+    rootPath: http://pay.magozfqs.com # 服务器请求地址
+    url:
+      pay: /Pay_Index.html # 支付提交
+      payDf: /Payment_Dfpay_add.html # 代付提交
+      findPay: /Pay_Trade_query.html # 支付查询
+      findPayDf: /Payment_Dfpay_query.html # 代付查询
+  okf:  #
+    merchantId: IDrolMnVlcWVIejl  # 商户编码
+    signKey: 31a1fcc9987815a08935ab3d79dadcdb   # 支付 key
+    notifyUrl: rpc/payapi/okf/notify  #okf支付系统回调支付通知地址，第三方主动请求
+    returnUrl: rpc/payapi/okf/returnhtml #返回链接页面链接
+    rootPath: http://pay.okfapicenter.com # 服务器请求地址
+    url: # 请求OKF 地址
+      pay: /order  # 支付提交

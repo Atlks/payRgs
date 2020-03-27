@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- magenta:洋红 -->
+<!-- boldMagenta:粗红-->
+<!-- cyan:青色 -->
+<!-- white:白色 -->
+<!-- magenta:洋红 -->
+<!-- boldYellow:金黄 -->
+<!-- green:绿色 -->
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+    <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
+    <property name="LOG_HOME" value="logs"/>
+    <property name="APP_NAME" value="top-service-finance"/>
+
+    <contextName>${APP_NAME}</contextName>
+
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>utf-8</charset>
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%-4relative %red(%d{yyyy-MM-dd HH:mm:ss.SSS}) %cyan([%thread]) %L %highlight(%-5level) %green(%logger{36}) - %boldYellow(%msg%n)</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 压缩 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 日志日常打印文件 -->
+        <file>${LOG_HOME}/${APP_NAME}.log</file>
+        <!-- 配置日志所生成的目录以及生成文件名的规则 在${LOG_HOME}/${APP_NAME}-2019-09-01.0.log.zip -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}-%d{yyyy-MM-dd}.%i.log..zip</fileNamePattern>
+            <!-- 如果按天来回滚，则最大保存时间为365天，365天之前的都将被清理掉 -->
+            <maxHistory>365</maxHistory>
+            <!-- 日志总保存量为10GB -->
+            <totalSizeCap>20GB</totalSizeCap>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!--文件达到 最大128MB时会被压缩和切割 -->
+                <maxFileSize>64 MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <!-- 过滤器，执行一个过滤器会有返回个枚举值，即DENY，NEUTRAL，ACCEPT其中之一。返回DENY，日志将立即被抛弃不再经过其他过滤器；返回NEUTRAL，有序列表里的下个过滤器过接着处理日志；返回ACCEPT，日志会被立即处理，不再经过剩余过滤器。
+过滤器被添加到<appender> 中，为<appender> 添加一个或多个过滤器后，可以用任意条件对日志进行过滤。<appender> 有多个过滤器时，按照配置顺序执行。 -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ALL</level>
+        </filter>
+        <!-- 文件输出的日志 的格式 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>utf-8</charset>
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符-->
+            <pattern>%-4relative %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %C %L %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <!-- Safely log to the same file from multiple JVMs. Degrades performance! -->
+        <!-- 如果是 true，日志会被安全的写入文件，即使其他的FileAppender也在向此文件做写入操作，效率低，默认是 false。-->
+        <prudent>false</prudent>
+    </appender>
+
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>64</queueSize>
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <springProfile name="prod">
+        <!-- prod的时候激活-->
+        <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>${ELK_SERVER}</destination>
+            <!-- encoder必须配置,有多种可选 -->
+            <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
+                <!-- todo 此处的top-service-dict修改为自己的服务名 也就是上面的APP_NAME 只是没有使用${APP_NAME}获取 担心不支持 所以写死了 -->
+                <customFields>{"service":"top-service-finance"}</customFields>
+            </encoder>
+            <connectionStrategy>
+                <roundRobin>
+                    <connectionTTL>5 minutes</connectionTTL>
+                </roundRobin>
+            </connectionStrategy>
+        </appender>
+    </springProfile>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+    </root>
+
+    <logger name="org" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+    <logger name="com" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+    <logger name="com.top.xiaoyu" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+    <logger name="com.platform.top.xiaoyu" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+    <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG" >
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+    <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+    <logger name="org.hibernate.engine.QueryParameters" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+    <logger name="org.hibernate.SQL" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+    <logger name="com.netflix.discovery.shared.resolver.aws" level="ERROR" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+    <logger name="com.top.xiaoyu.rearend.log.aspect" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ASYNC"/>
+        <springProfile name="prod">
+            <!-- prod的时候激活-->
+            <appender-ref ref="logstash"/>
+        </springProfile>
+    </logger>
+
+</configuration>

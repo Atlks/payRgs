@@ -1,0 +1,123 @@
+package com.platform.top.xiaoyu.run.service.pay.controller.backstage;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.platform.top.xiaoyu.run.service.api.auth.annotaions.ButtonDefine;
+import com.platform.top.xiaoyu.run.service.api.auth.annotaions.MenuDefine;
+import com.platform.top.xiaoyu.run.service.api.auth.enums.InternalResource;
+import com.platform.top.xiaoyu.run.service.api.common.token.SecurityUtil;
+import com.platform.top.xiaoyu.run.service.api.common.vo.req.IdReq;
+import com.platform.top.xiaoyu.run.service.api.common.vo.resp.PageResp;
+import com.platform.top.xiaoyu.run.service.api.pay.constant.PayConstant;
+import com.platform.top.xiaoyu.run.service.api.pay.exception.BasePayExceptionType;
+import com.platform.top.xiaoyu.run.service.api.pay.vo.TokenPayVO;
+import com.platform.top.xiaoyu.run.service.api.pay.vo.req.tokenpay.TokenPayInsertReq;
+import com.platform.top.xiaoyu.run.service.api.pay.vo.req.tokenpay.TokenPayPageReq;
+import com.platform.top.xiaoyu.run.service.api.pay.vo.req.tokenpay.TokenPayUpdateReq;
+import com.platform.top.xiaoyu.run.service.pay.service.ITokenPayService;
+import com.top.xiaoyu.rearend.boot.controller.TopBaseController;
+import com.top.xiaoyu.rearend.component.swagger.controller.BackstageController;
+import com.top.xiaoyu.rearend.log.annotation.ApiLog;
+import com.top.xiaoyu.rearend.tool.api.R;
+import com.top.xiaoyu.rearend.tool.exception.BizBusinessException;
+import com.top.xiaoyu.rearend.tool.util.bean.BeanCopyUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+/**
+ * 安全认证token 控制器
+ *
+ * @author coffey
+ */
+@RestController
+@AllArgsConstructor
+@RequestMapping(PayConstant.BACKSTAGE_TOKEN)
+@Api(value = "安全认证token", tags = "安全认证token")
+@BackstageController
+@MenuDefine(name = "安全认证token", moduleName = "TokenPay", parentCode = "payManage")
+public class TokenPayController extends TopBaseController {
+
+	@Autowired
+	private ITokenPayService tokenPayService;
+
+	@PostMapping("/findPage")
+	@ApiOperation(value = "分页查询", notes = "分页查询")
+	@ApiLog("分页查询")
+	@ButtonDefine(name = "分页查询", internal = InternalResource.ADMIN)
+	public R<PageResp<TokenPayVO>> findPage(@RequestBody @Validated TokenPayPageReq req) {
+		if(req.getPage() <= 0 ) {
+			throw new BizBusinessException(BasePayExceptionType.PARAM_PAGE);
+		}
+		if(req.getSize() <= 0 ) {
+			throw new BizBusinessException(BasePayExceptionType.PARAM_SIZE);
+		}
+		Page<TokenPayVO> page = new Page<TokenPayVO>(req.getPage(), req.getSize());
+		TokenPayVO vo = BeanCopyUtils.copyBean(req, TokenPayVO.class);
+		vo.setPlatformId(SecurityUtil.getLoginAccount().getPlatformId());
+		return R.data(new PageResp(tokenPayService.findPage(page, vo)));
+	}
+
+	@PostMapping("/findDetail")
+	@ApiOperation(value = "查询明细", notes = "查询明细")
+	@ApiLog("查询明细")
+	@ButtonDefine(name = "查询明细", internal = InternalResource.ADMIN)
+	public R<TokenPayVO> findDetail(@RequestBody @Validated IdReq req) {
+		if(null == req || null == req.getId() || req.getId() == 0) {
+			throw new BizBusinessException(BasePayExceptionType.PARAM_ID);
+		}
+		return R.data(tokenPayService.findDetail(req.getId(), SecurityUtil.getLoginAccount().getPlatformId()));
+	}
+
+	@PostMapping("/insert")
+	@ApiOperation(value = "单行新增", notes = "单行新增")
+	@ApiLog("单行新增")
+	@ButtonDefine(name = "单行新增", internal = InternalResource.ADMIN)
+	public R insert(@RequestBody @Validated TokenPayInsertReq req) {
+		if( null == req) {
+			throw new BizBusinessException(BasePayExceptionType.PARAM_NULL);
+		}
+		if( StringUtils.isEmpty(req.getSysKey()) ) {
+			throw new BizBusinessException(BasePayExceptionType.PARAM_SYSKEY);
+		}
+		TokenPayVO vo = BeanCopyUtils.copyBean(req, TokenPayVO.class);
+		vo.setPlatformId(SecurityUtil.getLoginAccount().getPlatformId());
+		return R.data(tokenPayService.insert(vo));
+	}
+
+	@PostMapping("/update")
+	@ApiOperation(value = "单行修改", notes = "单行修改")
+	@ApiLog("单行修改")
+	@ButtonDefine(name = "单行修改", internal = InternalResource.ADMIN)
+	public R update(@RequestBody @Validated TokenPayUpdateReq req) {
+		if( null == req) {
+			throw new BizBusinessException(BasePayExceptionType.PARAM_NULL);
+		}
+		if(req.getId().longValue() <= 0 ) {
+			throw new BizBusinessException(BasePayExceptionType.PARAM_ID);
+		}
+		if( StringUtils.isEmpty(req.getSysKey()) ) {
+			throw new BizBusinessException(BasePayExceptionType.PARAM_SYSKEY);
+		}
+		TokenPayVO vo = BeanCopyUtils.copyBean(req, TokenPayVO.class);
+		vo.setPlatformId(SecurityUtil.getLoginAccount().getPlatformId());
+		return R.data(tokenPayService.update(vo));
+	}
+
+	@PostMapping("/delBatch")
+	@ApiOperation(value = "批量删除", notes = "批量删除")
+	@ApiLog("批量删除")
+	@ButtonDefine(name = "批量删除", internal = InternalResource.ADMIN)
+	public R delBatch(@RequestBody @Validated List<Long> ids) {
+		return R.data(tokenPayService.delBatch(ids, SecurityUtil.getLoginAccount().getPlatformId()));
+	}
+
+}

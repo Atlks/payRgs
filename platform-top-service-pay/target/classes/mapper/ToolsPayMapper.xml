@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.top.xiaoyu.run.service.pay.mapper.ToolsPayMapper">
+
+    <sql id="baseSql">
+        <if test="vo.sysName != null and vo.sysName != '' ">
+            and sys_name like concat('%',#{vo.sysName}, '%')
+        </if>
+        <if test="vo.id != null and vo.id > 0  ">
+            and id = #{vo.id}
+        </if>
+        <if test="vo.lvl != null and vo.lvl > 0  ">
+            and lvl = #{vo.lvl}
+        </if>
+        <if test="vo.platformId != null and vo.platformId > 0  ">
+            and platform_id = #{vo.platformId}
+        </if>
+    </sql>
+    <select id="findPage" resultType="com.platform.top.xiaoyu.run.service.api.pay.vo.ToolsPayVO">
+        select * from pay_tools_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+
+    <select id="findListAll" resultType="com.platform.top.xiaoyu.run.service.api.pay.vo.ToolsPayVO">
+        select * from pay_tools_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+
+    <select id="findDetail" resultType="com.platform.top.xiaoyu.run.service.api.pay.vo.ToolsPayVO">
+        <if test="vo != null">
+            select * from pay_tools_t where 1=1
+            <include refid="baseSql"></include>
+            limit 1
+        </if>
+    </select>
+
+    <select id="findPriority" resultType="com.platform.top.xiaoyu.run.service.api.pay.vo.ToolsPayVO">
+        select * from pay_tools_t where priority != 1 and platformId = #{platformId}
+        limit 1
+    </select>
+</mapper>

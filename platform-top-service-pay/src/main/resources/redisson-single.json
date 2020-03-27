@@ -1,0 +1,10 @@
+{
+  "singleServerConfig":{
+    "password":"Ddredis20190529",
+    "address": "redis://192.168.0.2:6380"
+  },
+  "codec":{
+    "class":"org.redisson.codec.JsonJacksonCodec"
+  },
+  "transportMode":"NIO"
+}

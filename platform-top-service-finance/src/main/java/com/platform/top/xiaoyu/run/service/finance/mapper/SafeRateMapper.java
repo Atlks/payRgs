@@ -1,0 +1,24 @@
+package com.platform.top.xiaoyu.run.service.finance.mapper;
+
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.platform.top.xiaoyu.run.service.api.finance.vo.SafeRateVO;
+import com.platform.top.xiaoyu.run.service.finance.entity.SafeRate;
+import com.top.xiaoyu.rearend.component.mybatisplus.mapper.BaseMybatisPlusMapper;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+/**
+ * @author coffey
+ */
+@Mapper
+public interface SafeRateMapper extends BaseMybatisPlusMapper<SafeRate, Long> {
+
+	public SafeRateVO findDetail(@Param("vo") SafeRateVO vo);
+
+	public List<SafeRateVO> findListAll(@Param("vo") SafeRateVO vo);
+
+	public Page<SafeRateVO> findPage(Page page, @Param("vo") SafeRateVO safeVO);
+
+}

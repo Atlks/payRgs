@@ -1,0 +1,216 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      showDetails: ALWAYS
+
+#服务器端口
+server:
+  port: 10007
+  undertow:
+    # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
+    # 不要设置过大，如果过大，启动项目会报错：打开文件数过多
+    ioThreads: 8
+    # 阻塞任务线程池, 当执行类似servlet请求阻塞IO操作, undertow会从这个线程池中取得线程
+    # 它的值设置取决于系统线程执行任务的阻塞系数，默认值是IO线程数*8
+    workerThreads: 64
+    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+    # 每块buffer的空间大小,越小的空间被利用越充分，不要设置太大，以免影响其他应用，合适即可, 默认值源自JVM可用的最大内存量
+    bufferSize: 1024
+    # 是否分配的直接内存(NIO直接分配的堆外内存) 默认值是从可用于JVM的最大内存量派生的。
+    directBuffers: true
+
+
+eureka:
+  instance:
+    # ipAddress: 192.168.0.26
+    preferIpAddress: true  # 访问路径可以显示IP地址
+    # instanceId: ${eureka.instance.ipAddress}:${server.port} #显示服务名称(ip:port集群需不同名,如果重复会覆盖之前的实例)
+    #指示eureka客户端向*eureka服务器发送心跳以指示其仍处于活动状态所需的频率（以秒为单位）默认30。
+    leaseRenewalIntervalInSeconds: 10
+    #指示eureka服务器在收到last heartbeat之前等待的时间（以秒为单位），然后才能从该视图中删除此实例，并禁止流量到此实例。
+    #此值必须高于leaseRenewalIntervalInSeconds的值
+    leaseExpirationDurationInSeconds: 15
+  client:
+    #从eureka服务器注册表中获取注册信息的时间间隔（s），默认为30秒
+    registryFetchIntervalSeconds: 10
+    #复制实例变化信息到eureka服务器所需要的时间间隔（s），默认为30秒
+    instanceInfoReplicationIntervalSeconds: 10
+    #最初复制实例信息到eureka服务器所需的时间（s），默认为40秒
+    initialInstanceInfoReplicationIntervalSeconds: 15
+    #询问Eureka服务url信息变化的时间间隔（s），默认为300秒
+    eurekaServiceUrlPollIntervalSeconds: 10
+    service-url:
+      defaultZone: http://192.168.0.3:7777/eureka
+
+#MyBatis
+mybatisPlus:
+  # 3.1.2版本默认值就是classpath*:/mapper/**/*.xml
+  mapperLocations: classpath*:/mapper/**/*.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  #MyBaits 别名包扫描路径，通过该属性可以给包中的类注册别名，注册后在 Mapper 对应的 XML 文件中可以直接使用类名，
+  #而不用使用全限定的类名(即 XML 中调用的时候不用包含包名)
+  typeAliasesPackage: com.top.xiaoyu.run.service.dict.entity
+  #通过该属性可指定 MyBatis 的执行器，MyBatis 的执行器总共有三种
+  #ExecutorType.SIMPLE：该执行器类型不做特殊的事情，为每个语句的执行创建一个新的预处理语句（PreparedStatement）
+  #ExecutorType.REUSE：该执行器类型会复用预处理语句（PreparedStatement）
+  #ExecutorType.BATCH：该执行器类型会批量执行所有的更新语句
+  #executorType: BATCH
+  globalConfig:
+    banner: false
+    dbConfig:
+      #字段策略 0:"忽略判断",1:"非 NULL 判断"),2:"非空判断"
+      insertStrategy: 'NOT_NULL' #默认就是NOT_NULL
+      #驼峰下划线转换
+      tableUnderline: true #默认就是true
+  configuration:
+    mapUnderscoreToCamelCase: true
+    cacheEnabled: false
+    defaultEnumTypeHandler: com.baomidou.mybatisplus.extension.handlers.MybatisEnumTypeHandler
+
+
+spring:
+  cloud:
+    inetutils:
+      #强制仅使用站点本地地址
+      useOnlySiteLocalInterfaces: true
+      #强制使用正则表达式列表中指定的网络地址
+      preferredNetworks:
+        - 192.168.0
+    stream:
+      rocketmq:
+        binder:
+          name-server: 192.168.0.4:9876
+        bindings:
+          user_to_finance_input:
+            consumer:
+              orderly: false
+          agent_to_finance_input:
+            consumer:
+              orderly: true
+          operate_to_finance_input:
+            consumer:
+              orderly: true
+          threadgame_to_finance_input:
+            consumer:
+              orderly: true
+          activity_to_finance_input:
+            consumer:
+              orderly: true
+          finance_to_user_output:
+            producer:
+              group: finance_to_user_group
+          finance_to_es_output:
+            producer:
+              group: finance_to_es_group
+          finance_to_activity_output:
+            producer:
+              group: finance_to_activity_group
+      bindings:
+        user_to_finance_input: # 用户账号注册 接收
+          group: user_to_finance_group
+          destination: user_to_finance_topic
+          content-type: application/json
+        agent_to_finance_input: # 领取佣金 接收
+          group: agent_to_finance_group
+          destination: agent_to_finance_topic
+          content-type: application/json
+        operate_to_finance_input: # 洗码
+          group: operate_to_finance_group
+          destination: operate_to_finance_topic
+          content-type: application/json
+        threadgame_to_finance_input: # 登出游戏， 可用余额累加
+          group: threadgame_to_finance_group
+          destination: threadgame_to_finance_topic
+          content-type: application/json
+        activity_to_finance_input: # 活动， 可用余额累加
+          group: activity_to_finance_group
+          destination: activity_to_finance_topic
+          content-type: application/json
+        finance_to_user_output: # 发送给用户模块消息
+          group: finance_to_user_group
+          destination: finance_to_user_topic
+          content-type: application/json
+        finance_to_es_output: # 发送给ES模块消息
+          group: finance_to_es_group
+          destination: finance_to_es_topic
+          content-type: application/json
+        finance_to_activity_output: # 发送给 活动 模块消息
+          group: finance_to_activity_group
+          destination: finance_to_activity_topic
+          content-type: application/json
+    bus:
+      ack:
+        destination-service:
+
+  redis:
+    redisson:
+      config: classpath:redisson-single.json
+  datasource:
+    url: jdbc:mysql://192.168.0.2:3306/platform_finance?useSSL=false&characterEncoding=utf8&useUnicode=true&useLocalSessionState=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: Ddmysql20190529
+    druid:
+      initialSize: 0
+      maxActive: 8
+      minIdle: 0
+      maxWait: -1
+  main:
+    allow-bean-definition-overriding: true
+  #main:     allow-bean-definition-overriding:true
+
+top:
+  zookeeper:
+    url: 192.168.0.2:2181
+  lock:
+    zookeeper:
+      enable: true
+  fastdfs:
+    enable: true
+    url: http://192.168.0.2/group1/
+    pool:
+      connectTimeout: 2000
+      soTimeout: 3000
+      trackerList:
+        - 192.168.0.2:22122
+
+pwd: # 密码key
+  mybook: # 我的账本 保险箱密码 支付密码key
+    pwdKey: top_dingdian
+
+serviceBalance: # 可用余额新增所有对接系统服务签名key
+  order: top_order  # 订单系统, 游戏订单
+  user: top_user  # 用户系统
+  activity: top_activity # 活动系统
+
+pwd_mybook_pwdKey: top_dingdian
+
+payToken: # 调用支付系统 配置key
+  pay: # 支付系统
+    sysKey: 666666 #支付系统分配的密钥
+    token: 3D0D815327734B24011C46C470504F08 #支付系统分配的token
+
+
+xxl:
+  job:
+    ### 执行器通讯TOKEN [选填]：非空时启用；
+    accessToken:
+    admin:
+      ### 调度中心部署跟地址 [选填]：如调度中心集群部署存在多个地址则用逗号分隔。
+      ### 执行器将会使用该地址进行"执行器心跳注册"和"任务结果回调"；为空则关闭自动注册；
+      addresses: http://192.168.0.3:18080/top-job-admin
+    executor:
+      ### 执行器AppName [选填]：执行器心跳注册分组依据；为空则关闭自动注册
+      appname: top-job-executor-finance
+      ### 执行器IP [选填]：默认为空表示自动获取IP，多网卡时可手动设置指定IP，
+      ### 该IP不会绑定Host仅作为通讯实用；地址信息用于 "执行器注册" 和 "调度中心请求并触发任务"；
+      ip:
+      ### 执行器端口号 [选填]：小于等于0则自动获取；默认端口为9999，单机部署多个执行器时，注意要配置不同执行器端口；
+      port: 15558
+      ### 执行器运行日志文件存储磁盘路径 [选填] ：需要对该路径拥有读写权限；为空则使用默认路径；
+      logpath: ../logs/top-job/jobhandler
+      ### 执行器日志保存天数 [选填] ：值大于3时生效，启用执行器Log文件定期清理功能，否则不生效；
+      logretentiondays: 1

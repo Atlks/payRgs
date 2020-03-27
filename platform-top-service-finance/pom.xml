@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>platform-top-service</artifactId>
+        <groupId>com.platform.top.xiaoyu.run.service</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>platform-top-service-finance</artifactId>
+    <groupId>com.platform.top.xiaoyu.run.service.finance</groupId>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-compiler-eclipse</artifactId>
+            <version>2.8.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>ecj</artifactId>
+            <version>4.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jdt.core.compiler</groupId>
+            <artifactId>ecj</artifactId>
+            <version>4.6.1</version>
+        </dependency>
+<!--
+        <dependency>
+
+            <groupId>org.yaml</groupId>
+
+            <artifactId>snakeyaml</artifactId>
+
+            <version>1.17</version>
+
+        </dependency>
+        -->
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+
+        <dependency>
+
+            <groupId>org.apache.tomcat.embed</groupId>
+
+            <artifactId>tomcat-embed-core</artifactId>
+
+            <version>9.0.22</version>
+
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.4.8</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>4.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jsqlparser</groupId>
+            <artifactId>jsqlparser</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-tools</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+
+        <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.20</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <version>3.0.8</version>
+        </dependency>
+        <dependency>
+            <artifactId>platform-top-common</artifactId>
+            <groupId>com.platform.top.xiaoyu.run.common</groupId>
+            <version>${top-run.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.top.xiaoyu.rearend.boot</groupId>
+            <artifactId>top-boot</artifactId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>top-component-swagger2-starter</artifactId>
+            <groupId>com.top.xiaoyu.rearend.component.swagger</groupId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>top-component-mybatisplus-starter</artifactId>
+            <groupId>com.top.xiaoyu.rearend.component.mybatisplus</groupId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.top.xiaoyu.rearend.component.rocketmq</groupId>
+            <artifactId>top-component-rocketmq-starter</artifactId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.top.xiaoyu.rearend.component.lock</groupId>
+            <artifactId>top-component-lock-starter</artifactId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.finance</groupId>
+            <artifactId>platform-top-service-finance-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.pay</groupId>
+            <artifactId>platform-top-service-pay-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.user</groupId>
+            <artifactId>platform-top-service-user-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.auth</groupId>
+            <artifactId>platform-top-service-auth-api</artifactId>
+            <version>${top-run.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.agent</groupId>
+            <artifactId>platform-top-service-agent-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.top.xiaoyu.rearend.component.xxljob</groupId>
+            <artifactId>top-component-xxljob-starter</artifactId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.es</groupId>
+            <artifactId>platform-top-service-es-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.operate</groupId>
+            <artifactId>platform-top-service-operate-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.system</groupId>
+            <artifactId>platform-top-service-system-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.threadgame</groupId>
+            <artifactId>platform-top-service-threadgame-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.ws</groupId>
+            <artifactId>platform-top-service-ws-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.activity</groupId>
+            <artifactId>platform-top-service-activity-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>5.1.9.RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>5.1.9.RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>5.1.9.RELEASE</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
+
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+
+
+        </plugins>
+    </build>
+
+</project>

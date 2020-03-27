@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.top.xiaoyu.run.service.finance.mapper.MsgBusMapper">
+
+    <sql id="baseSql">
+        <if test="null != vo">
+            <if test="vo.id != null and vo.id > 0 ">
+                and id = #{vo.id}
+            </if>
+            <if test="vo.userId != null and vo.userId > 0 ">
+                and user_id = #{vo.userId}
+            </if>
+            <if test="vo.platformId != null and vo.platformId > 0 ">
+                and platform_id = #{vo.platformId}
+            </if>
+            <if test="vo.code != null and vo.code > 0 ">
+                and `code` = #{vo.code}
+            </if>
+            <if test="vo.type != null and vo.type > 0 ">
+                and `type` = #{vo.type}
+            </if>
+            <if test="vo.statuss != null and vo.statuss > 0 ">
+                and statuss = #{vo.statuss}
+            </if>
+        </if>
+    </sql>
+
+    <select id="findPage" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.MsgBusVO">
+        select * from fs_msg_bus_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+
+    <select id="findListAll" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.MsgBusVO">
+        select * from fs_msg_bus_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+
+    <select id="findDetail" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.MsgBusVO">
+        <if test="vo != null">
+            select * from fs_msg_bus_t where 1=1
+            <include refid="baseSql"></include>
+            limit 1
+        </if>
+    </select>
+
+</mapper>

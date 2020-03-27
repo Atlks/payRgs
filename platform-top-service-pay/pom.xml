@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>platform-top-service</artifactId>
+        <groupId>com.platform.top.xiaoyu.run.service</groupId>
+        <version>1.0.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>platform-top-service-pay</artifactId>
+    <groupId>com.platform.top.xiaoyu.run.service.pay</groupId>
+
+    <dependencies>
+
+        <dependency>
+            <artifactId>platform-top-common</artifactId>
+            <groupId>com.platform.top.xiaoyu.run.common</groupId>
+            <version>${top-run.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.top.xiaoyu.rearend.boot</groupId>
+            <artifactId>top-boot</artifactId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>top-component-swagger2-starter</artifactId>
+            <groupId>com.top.xiaoyu.rearend.component.swagger</groupId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+
+        <dependency>
+            <artifactId>top-component-mybatisplus-starter</artifactId>
+            <groupId>com.top.xiaoyu.rearend.component.mybatisplus</groupId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.top.xiaoyu.rearend.component.rocketmq</groupId>
+            <artifactId>top-component-rocketmq-starter</artifactId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.top.xiaoyu.rearend.component.lock</groupId>
+            <artifactId>top-component-lock-starter</artifactId>
+            <version>${top-rearend.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.pay</groupId>
+            <artifactId>platform-top-service-pay-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.finance</groupId>
+            <artifactId>platform-top-service-finance-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.user</groupId>
+            <artifactId>platform-top-service-user-api</artifactId>
+            <version>${top-run.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.platform.top.xiaoyu.run.service.api.auth</groupId>
+            <artifactId>platform-top-service-auth-api</artifactId>
+            <version>${top-run.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

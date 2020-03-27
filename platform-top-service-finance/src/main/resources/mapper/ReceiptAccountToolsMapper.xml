@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.top.xiaoyu.run.service.finance.mapper.ReceiptAccountToolsMapper">
+
+    <sql id="baseSql">
+        <if test="null != vo">
+            <if test="vo.id != null and vo.id > 0 ">
+                and `id` = #{vo.id}
+            </if>
+            <if test="vo.type != null and vo.type > 0 ">
+                and `type` = #{vo.type}
+            </if>
+            <if test="vo.payPlatformId != null and vo.payPlatformId > 0 ">
+                and pay_platform_id = #{vo.payPlatformId}
+            </if>
+            <if test="vo.offer != null and vo.offer > 0 ">
+                and `offer` = #{vo.offer}
+            </if>
+            <if test="vo.typePage != null and vo.typePage > 0 ">
+                and type_page = #{vo.typePage}
+            </if>
+            <if test="vo.name != null and vo.name != '' ">
+                and `name` like concat('%',#{vo.name}, '%')
+            </if>
+        </if>
+    </sql>
+    <select id="findPage" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.ReceiptAccountToolsVO">
+        select * from fs_account_tools_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+    <select id="findListAll" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.ReceiptAccountToolsVO">
+        select * from fs_account_tools_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+
+    <select id="findDetail" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.ReceiptAccountToolsVO">
+        <if test="vo != null " >
+            select * from fs_account_tools_t where 1=1
+            <include refid="baseSql"></include>
+            limit 1
+        </if>
+    </select>
+
+</mapper>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.top.xiaoyu.run.service.pay.mapper.PayPlatformMapper">
+
+    <sql id="baseSql">
+        <if test="vo.appName != null and vo.appName != '' ">
+            and app_name like concat('%',#{vo.appName}, '%')
+        </if>
+        <if test="vo.appId != null and vo.appId != '' ">
+            and app_id = #{vo.appId}
+        </if>
+        <if test="vo.appKey != null and vo.appKey != '' ">
+            and app_key = #{vo.appKey}
+        </if>
+        <if test="vo.id != null and vo.id > 0  ">
+            and id = #{vo.id}
+        </if>
+        <if test="vo.isDeleted != null and vo.isDeleted > 0  ">
+            and is_deleted = #{vo.isDeleted}
+        </if>
+        <if test="vo.priority != null and vo.priority > 0  ">
+            and priority = #{vo.priority}
+        </if>
+        <if test="vo.statuss != null and vo.statuss > 0  ">
+            and statuss = #{vo.statuss}
+        </if>
+        <if test="vo.encrypt != null and vo.encrypt != '' ">
+            and encrypt = #{vo.encrypt}
+        </if>
+    </sql>
+    <select id="findPage" resultType="com.platform.top.xiaoyu.run.service.api.pay.vo.PayPlatformVO">
+        select * from pay_platform_t where 1=1
+        <include refid="baseSql"></include>
+        order by sort_by asc , create_timestamp desc
+    </select>
+
+    <select id="findListAll" resultType="com.platform.top.xiaoyu.run.service.api.pay.vo.PayPlatformVO">
+        select * from pay_platform_t where 1=1
+        <include refid="baseSql"></include>
+        order by sort_by
+    </select>
+
+    <select id="findDetail" resultType="com.platform.top.xiaoyu.run.service.api.pay.vo.PayPlatformVO">
+        <if test="vo != null">
+            select * from pay_platform_t where 1=1
+            <include refid="baseSql"></include>
+            order by sort_by
+            limit 1
+        </if>
+    </select>
+
+</mapper>

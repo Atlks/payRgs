@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.top.xiaoyu.run.service.finance.mapper.SafeRateMapper">
+
+    <sql id="baseSql">
+        <if test="null != vo">
+            <if test="vo.id != null and vo.id > 0 ">
+                and id = #{vo.id}
+            </if>
+            <if test="vo.dayNum != null and vo.dayNum > 0 ">
+                and day_num = #{vo.dayNum}
+            </if>
+            <if test="vo.rate != null and vo.rate > 0 ">
+                and rate = #{vo.rate}
+            </if>
+            <if test="vo.platformId != null and vo.platformId > 0 ">
+                and platform_id = #{vo.platformId}
+            </if>
+        </if>
+    </sql>
+
+    <select id="findDetail" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.SafeRateVO">
+        <if test="vo != null" >
+            select * from fs_safe_rate_t where 1=1
+            <include refid="baseSql"></include>
+            limit 1
+        </if>
+    </select>
+
+    <select id="findPage" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.SafeRateVO">
+        select * from fs_safe_rate_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+
+    <select id="findListAll" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.SafeRateVO">
+        select * from fs_safe_rate_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+
+</mapper>

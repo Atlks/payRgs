@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.top.xiaoyu.run.service.finance.mapper.OrderSynMapper">
+
+    <sql id="baseSql">
+        <if test="null != vo">
+            <if test="vo.userId != null and vo.userId > 0 ">
+                and user_id = #{vo.userId}
+            </if>
+            <if test="vo.platformId != null and vo.platformId > 0 ">
+                and platform_id = #{vo.platformId}
+            </if>
+        </if>
+    </sql>
+
+    <select id="findLastDetail" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.OrderSynVO">
+        select
+         id,
+         bus_id,
+         bus_code,
+         user_id,
+         platform_id,
+         last_order_datetime,
+         batch_code,
+         create_timestamp
+        from fs_order_code_t
+        where 1=1
+        <include refid="baseSql"></include>
+        order by create_timestamp desc
+    </select>
+</mapper>

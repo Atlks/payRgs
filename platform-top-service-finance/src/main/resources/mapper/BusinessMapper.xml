@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.top.xiaoyu.run.service.finance.mapper.BusinessMapper">
+
+    <sql id="baseSql">
+        <if test="null != vo">
+            <if test="vo.id != null and vo.id > 0 ">
+                and id = #{vo.id}
+            </if>
+            <if test="vo.userId != null and vo.userId > 0 ">
+                and user_id = #{vo.userId}
+            </if>
+            <if test="vo.platformId != null and vo.platformId > 0 ">
+                and platform_id = #{vo.platformId}
+            </if>
+            <if test="vo.typeAll != null and vo.typeAll > 0 ">
+                and `type_all` = #{vo.typeAll}
+            </if>
+            <if test="vo.type != null and vo.type > 0 ">
+                and `type` = #{vo.type}
+            </if>
+            <if test="vo.statuss != null and vo.statuss > 0 ">
+                and `statuss` = #{vo.statuss}
+            </if>
+            <if test="vo.payStatus != null and vo.payStatus > 0 ">
+                and `pay_status` = #{vo.payStatus}
+            </if>
+            <if test="vo.tradingManner != null and vo.tradingManner > 0 ">
+                and `trading_manner` = #{vo.tradingManner}
+            </if>
+            <if test="vo.code != null and vo.code != '' ">
+                and `code` = #{vo.code}
+            </if>
+            <if test="vo.payCode != null and vo.payCode != '' ">
+                and `pay_code` = #{vo.payCode}
+            </if>
+        </if>
+    </sql>
+
+    <select id="findPage" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.BusinessVO">
+        select * from fs_business_t where 1=1
+        <include refid="baseSql"></include>
+        order by create_timestamp desc
+    </select>
+
+    <select id="findDetail" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.BusinessVO">
+        <if test="vo != null">
+            select * from fs_business_t where 1=1
+            <include refid="baseSql"></include>
+            limit 1
+        </if>
+    </select>
+
+    <select id="findListAll" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.BusinessVO">
+         select * from fs_business_t where 1=1
+        <include refid="baseSql"></include>
+        order by create_timestamp desc
+    </select>
+
+</mapper>

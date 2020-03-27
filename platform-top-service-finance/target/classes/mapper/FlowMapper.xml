@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.top.xiaoyu.run.service.finance.mapper.FlowMapper">
+
+    <sql id="baseSql">
+        <if test="null != vo">
+            <if test="vo.userId != null and vo.userId > 0 ">
+                and user_id = #{vo.userId}
+            </if>
+            <if test="vo.platformId != null and vo.platformId > 0 ">
+                and platform_id = #{vo.platformId}
+            </if>
+            <if test="vo.gameType != null and vo.gameType > 0 ">
+                and game_type = #{vo.gameType}
+            </if>
+            <if test="vo.tradingManner != null and vo.tradingManner > 0 ">
+                and trading_manner = #{vo.tradingManner}
+            </if>
+            <if test="vo.type != null and vo.type > 0 ">
+                and `type` = #{vo.type}
+            </if>
+            <if test="vo.typeAll != null and vo.typeAll > 0 ">
+                and `type_all` = #{vo.typeAll}
+            </if>
+        </if>
+    </sql>
+    <select id="findPage" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.FlowVO">
+        select * from fs_flow_t where 1=1
+        <include refid="baseSql"></include>
+        order by create_timestamp desc
+    </select>
+
+    <select id="findFlowDetail" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.FlowVO">
+        <if test="null != vo">
+            select * from fs_flow_t where 1=1
+            <include refid="baseSql"></include>
+            limit 1
+        </if>
+    </select>
+
+    <select id="findLastFlowDetail" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.FlowVO">
+        <if test="null != vo">
+            select * from fs_flow_t where 1=1
+            <include refid="baseSql"></include>
+            order by create_timestamp desc
+            limit 1
+        </if>
+    </select>
+
+
+    <select id="recharge_count22" resultType="map" parameterType="map">
+
+select 1;
+
+    </select>
+
+
+    <!--    判断是否首充与3充值次数;;   -->
+    <select id="recharge_count" resultType="map" parameterType="map">
+
+
+
+
+select count(*)  as recharge_count from  fs_flow_t where  user_id=#{userId}  and platform_id=#{platformId};
+
+
+
+    </select>
+
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.top.xiaoyu.run.service.finance.mapper.ReceiptAccountValueMapper">
+
+    <sql id="baseSql">
+        <if test="null != vo">
+            <if test="vo.id != null and vo.id > 0 ">
+                and id = #{vo.id}
+            </if>
+            <if test="vo.toolsId != null and vo.toolsId > 0 ">
+                and tools_id = #{vo.toolsId}
+            </if>
+        </if>
+    </sql>
+    <select id="findPage" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.ReceiptAccountValueVO">
+        select * from fs_account_value_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+    <select id="findListAll" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.ReceiptAccountValueVO">
+        select * from fs_account_value_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+    <select id="findDetail" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.ReceiptAccountValueVO">
+        <if test="vo != null " >
+            select * from fs_account_value_t where 1=1
+            <include refid="baseSql"></include>
+            limit 1
+        </if>
+    </select>
+
+
+</mapper>

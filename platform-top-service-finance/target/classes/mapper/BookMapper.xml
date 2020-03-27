@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.platform.top.xiaoyu.run.service.finance.mapper.BookMapper">
+
+    <sql id="baseSql">
+        <if test="null != vo">
+            <if test="vo.userId != null and vo.userId > 0 ">
+                and user_id = #{vo.userId}
+            </if>
+            <if test="vo.platformId != null and vo.platformId > 0 ">
+                and platform_id = #{vo.platformId}
+            </if>
+            <if test="vo.userName != null and vo.userName != '' ">
+                and user_name = #{vo.userName}
+            </if>
+        </if>
+    </sql>
+
+    <select id="findDetail" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.BookVO">
+        <if test="null != vo">
+            select * from fs_book_t where 1=1
+            <include refid="baseSql"></include>
+            limit 1
+        </if>
+    </select>
+
+    <select id="findPage" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.BookVO">
+        select * from fs_book_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+
+    <select id="findListAll" resultType="com.platform.top.xiaoyu.run.service.api.finance.vo.BookVO">
+        select * from fs_book_t where 1=1
+        <include refid="baseSql"></include>
+    </select>
+
+    <update id="addBalanceSafeIn">
+        update fs_book_t set
+            balance = balance + ( -#{amount} )
+            ,balance_safe = balance_safe +  #{amount}
+            ,update_timestamp = now()
+        where id = #{id} and platform_id = #{platformId}
+        and balance + ( -#{amount} ) >= 0
+        and balance_safe +  #{amount}  >= 0
+    </update>
+
+    <update id="addBalanceSafeOut">
+        update fs_book_t set
+            balance = balance +  #{amount}
+            ,balance_safe = balance_safe + ( -#{amount} )
+            ,update_timestamp = now()
+        where id = #{id} and platform_id = #{platformId}
+        and balance +  #{amount}  >= 0
+        and balance_safe + ( -#{amount} ) >= 0
+    </update>
+
+    <update id="addBalanceExtractReg">
+        update fs_book_t set
+            balance = balance + ( -#{amount} )
+            ,money_extract = money_extract +  #{amount}
+            ,update_timestamp = now()
+        where id = #{id} and platform_id = #{platformId}
+        and balance + ( -#{amount} ) > 1000000
+        and money_extract +  #{amount}  >= 0
+    </update>
+
+    <update id="addBalanceExtractEnd">
+        update fs_book_t set
+            money_extract = money_extract + ( -#{amount} )
+            ,update_timestamp = now()
+        where id = #{id} and platform_id = #{platformId}
+        and money_extract + ( -#{amount} ) >= 0
+    </update>
+
+    <update id="addBalanceSignIn">
+         update fs_book_t set
+            balance = 0
+            ,balance_number = balance_number +  #{amount}
+            ,update_timestamp = now()
+        where id = #{id} and platform_id = #{platformId}
+        and balance_number +  #{amount} >= 0
+    </update>
+
+    <update id="addBalanceSignOut">
+         update platform_finance.fs_book_t set
+          balance =  balance + #{amount}
+          ,balance_number = balance_number + (-#{balance_freeze})
+        where id = #{id} and platform_id = #{platformId}
+        and balance_number + (-#{balance_freeze}) >= 0
+    </update>
+
+    <update id="addBalanceRecharge">
+        update fs_book_t set
+            balance = balance +(#{amount})
+            ,update_timestamp = now()
+        where id = #{id} and platform_id = #{platformId}
+        and balance + (#{amount}) >= 0
+    </update>
+
+    <update id="addBalanceExtractFail">
+        update fs_book_t set
+            balance = balance +  #{amount}
+            , money_extract = money_extract + ( -#{amount} )
+            ,update_timestamp = now()
+        where id = #{id} and platform_id = #{platformId}
+        and balance + #{amount} >= 0
+        and money_extract + ( -#{amount} ) >= 0
+    </update>
+
+<!-- com.platform.top.xiaoyu.run.service.api.finance.vo.req.mybook.BalanceHistoryListRetObj-->
+    <resultMap type="map" id="MySimpleEmp">
+        <!--指定主键列的封装规则
+        id： 使用该标签，定义主键会底层有优化；当然也可以使用result。推荐使用id
+        column：指定数据库中哪一列
+        property：指定对应的javaBean属性
+          -->
+
+        <!-- 定义普通列封装规则 -->
+        <result column="platform_id" property="platformId"/>
+        <!-- 其他不指定的列会自动封装：但推荐写完整。 -->
+        <result column="Total_number_of_people" property="Total_number_of_people"/>
+        <result column="total_balance" property="total_balance"/>
+        <result column="safebox_total_balance" property="safebox_total_balance"/>
+
+    </resultMap>
+
+    <!--
+com.platform.top.xiaoyu.run.service.api.finance.vo.req.QueryParam
+     查询每天统计余额   balanceHistoryListRetObj -->
+    <select id="balanceHistoryList" resultMap="MySimpleEmp"  parameterType="map">
+
+
+
+    select * from fs_banlace_date_t where 1=1
+
+        <if test="platformId!= null ">
+            and platform_id = #{platformId}
+        </if>
+        <if test="date != null   ">
+            and datax=#{date}
+        </if>
+
+
+
+    </select>
+
+    <!--    查询每天统计余额  group by platform_id -->
+    <select id="balanceHistoryListCurrentGroupbyPlatform_id" resultType="map" parameterType="map">
+
+
+        <!-- bind:可以将OGNL表达式的值绑定到一个变量中，方便后来引用这个变量的值 -->
+        <bind name="validFields" value="  'a,b,c'  "/> eName是employee中一个属性值
+
+        <if test="@org.chwin.firefighting.apiserver.data.MybatisUtil@validNull(_parameter, 'a,b,c' )">
+        --  throw #{_parameter}
+          --  throw  parameterType_isNUll_ex;
+
+        </if>
+        <if test="platformId == null ">
+
+        --    throw  my_custom_ex
+       --   select * from some_ex;
+         --
+        </if>
+         select platform_id,COUNT(id) Total_number_of_people,sum(balance) total_balance,sum(balance_safe) safebox_total_balance from  fs_book_t group by platform_id;
+-- insert into fs_param_t(class,method,nextStatSelectId)values('org.chwin.firefighting.apiserver.data.anothOp','meth1','nextProcess');
+ --       SELECT ROW_COUNT();
+    </select>
+
+    <select id="if_process"   resultType="map"  parameterType="map">
+
+
+        <if test="var1>1">
+            select "thenBlock";
+
+        </if>
+
+
+    </select>
+
+
+    <select id="总流程"   resultType="map"  parameterType="map">
+
+
+
+        <bind name="name" value="@attilax.mybatis.MybatisUtil@setNextProcess('第一个流程')"/>
+
+        <bind name="name" value="@attilax.mybatis.MybatisUtil@setNextProcess('nextProcess')"/>
+
+        select "最后流程";
+
+    </select>
+
+    <select id="第一个流程"   resultType="map"  parameterType="map">
+
+        select "第一个流程结果";
+
+    </select>
+
+
+    <select id="nextProcess"   resultType="map"  parameterType="map">
+
+    select "nextval";
+
+    </select>
+
+
+    <select id="eventQuery" resultType="map"  parameterType="map">
+
+    select * from fs_param_t;
+
+    </select>
+
+
+
+    <update id="balanceHistoryListInsert"  parameterType="map">
+
+
+        INSERT INTO `fs_banlace_date_t`(Total_number_of_people,platform_id,datax,total_balance,safebox_total_balance,creatime) VALUES (#{Total_number_of_people},  #{platform_id},date(now()), #{total_balance}, #{safebox_total_balance},now());
+
+    </update>
+
+
+
+</mapper>
