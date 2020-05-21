@@ -57,7 +57,7 @@
 
             <artifactId>tomcat-embed-core</artifactId>
 
-            <version>9.0.22</version>
+            <version>9.0.35</version>
 
         </dependency>
 
